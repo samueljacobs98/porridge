@@ -1,0 +1,18 @@
+{
+  "extends": "@config/typescript/nextjs.json",
+  "compilerOptions": {
+    "paths": {
+      "@/*": ["./*"],
+      "@frontend/ui/*": ["../../packages/ui/src/*"]
+    },
+    "plugins": [{ "name": "next" }],
+    "types": ["jest", "node"]
+  },
+  "include": [
+    "next-env.d.ts",
+    "next.config.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    ".next/types/**/*.ts"
+  ]
+}
