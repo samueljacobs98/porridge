@@ -17,12 +17,18 @@ import {
   DropdownMenuTrigger,
 } from "@frontend/ui/components/dropdown-menu";
 import { IconDots } from "@tabler/icons-react";
+import { DatetimeFormat, formatDatetime } from "@repo/datetimes";
+import { SessionMetadata } from "@/lib/types";
 
-export function SessionsListDropdownMenu() {
+export function SessionsListDropdownMenu({
+  session,
+}: {
+  session: SessionMetadata;
+}) {
   return (
     <>
-      <p className="font-tabular-nums text-xs group-hover/list-item:hidden group-has-data-popup-open/list-item:hidden group-has-data-open/list-item:hidden">
-        12:54
+      <p className="text-xs tabular-nums group-hover/list-item:hidden group-has-data-popup-open/list-item:hidden group-has-data-open/list-item:hidden">
+        {formatDatetime(session.createdAt, DatetimeFormat.Time24)}
       </p>
       <AlertDialog>
         <DropdownMenu>
