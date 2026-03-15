@@ -13,8 +13,7 @@ export function syncEditorHeight(
   element.style.height = "0px";
 
   const computedStyles = window.getComputedStyle(element);
-  const resolvedMinHeight =
-    Number.parseFloat(computedStyles.minHeight) || 0;
+  const resolvedMinHeight = Number.parseFloat(computedStyles.minHeight) || 0;
   const resolvedMaxHeight =
     maxHeight === undefined
       ? Number.POSITIVE_INFINITY
@@ -26,7 +25,8 @@ export function syncEditorHeight(
   );
 
   element.style.height = `${nextHeight}px`;
-  element.style.overflowY = element.scrollHeight > nextHeight ? "auto" : "hidden";
+  element.style.overflowY =
+    element.scrollHeight > nextHeight ? "auto" : "hidden";
 }
 
 function applyOptionalStyle(

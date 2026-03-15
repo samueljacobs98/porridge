@@ -28,7 +28,10 @@ export function getMentionInsertedText({
     return mergeText(remainingText, mentionText);
   }
 
-  return mergeText(mergeText(textBeforeSelection, mentionText), textAfterSelection);
+  return mergeText(
+    mergeText(textBeforeSelection, mentionText),
+    textAfterSelection
+  );
 }
 
 function mergeText(left: string, right: string) {

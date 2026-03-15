@@ -173,7 +173,6 @@ export const MultiTriggerMention = Extension.create<MultiTriggerMentionOptions>(
                 latestProps.editor.view.dom.closest(
                   "[data-mentions-text-area-anchor]"
                 ) ?? latestProps.editor.view.dom;
-              const anchorWidth = anchorElement.getBoundingClientRect().width;
 
               const anchor = {
                 contextElement: latestProps.editor.view.dom,
@@ -188,16 +187,13 @@ export const MultiTriggerMention = Extension.create<MultiTriggerMentionOptions>(
                   <PopoverContent
                     align="start"
                     anchor={anchor}
-                    className="max-h-64 gap-0 overflow-y-auto p-0.5"
+                    className="max-h-64 w-[calc(var(--container-xl)-(var(--spacing))*6*2)] gap-0 overflow-y-auto p-0.5"
                     initialFocus={false}
                     finalFocus={false}
                     positionMethod="fixed"
                     side="top"
-                    sideOffset={12}
-                    style={{
-                      maxWidth: "calc(100vw - 1rem)",
-                      width: `${anchorWidth}px`,
-                    }}
+                    sideOffset={24}
+                    alignOffset={-80}
                   >
                     <MentionsSuggestionMenu
                       items={latestProps.items}
