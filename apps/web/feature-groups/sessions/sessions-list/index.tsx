@@ -15,11 +15,11 @@ import { useGroupedSessionsMetadata } from "./lib/state/hooks/use-grouped-sessio
 import { useSessionsMetadata } from "./lib/state/queries/use-sessions-metadata";
 
 export function SessionsList() {
-  const { data: sessions } = useSessionsMetadata();
-  const sessionsByDay = useGroupedSessionsMetadata(sessions);
+  const { data: sessionsMetadata } = useSessionsMetadata();
+  const sessionsMetadataByDay = useGroupedSessionsMetadata(sessionsMetadata);
   return (
     <>
-      {sessionsByDay.map((group) => (
+      {sessionsMetadataByDay.map((group) => (
         <div key={group.type === "earlier" ? "earlier" : group.date.toISO()}>
           <div className="p-2">
             <p className="text-xs font-medium text-muted-foreground">
@@ -29,27 +29,27 @@ export function SessionsList() {
             </p>
           </div>
           <List>
-            {group.sessions.map((session) => (
-              <ListItem key={session.id} className="h-10">
+            {group.sessions.map((sessionMetadata) => (
+              <ListItem key={sessionMetadata.id} className="h-10">
                 <Link
-                  href={`/sessions/${session.id}`}
+                  href={`/sessions/${sessionMetadata.id}`}
                   className="w-full cursor-default"
                 >
                   <ListItemContent>
                     <Avatar>
                       <AvatarFallback>
-                        {getInitials(session.lecturer)}
+                        {getInitials(sessionMetadata.lecturer)}
                       </AvatarFallback>
                     </Avatar>
                     <div className="flex flex-col">
-                      <ListItemTitle>{session.name}</ListItemTitle>
+                      <ListItemTitle>{sessionMetadata.name}</ListItemTitle>
                       <ListItemDescription className="text-xs text-muted-foreground">
-                        {session.lecturer}
+                        {sessionMetadata.lecturer}
                       </ListItemDescription>
                     </div>
                   </ListItemContent>
                 </Link>
-                <SessionsListDropdownMenu session={session} />
+                <SessionsListDropdownMenu sessionMetadata={sessionMetadata} />
               </ListItem>
             ))}
           </List>
