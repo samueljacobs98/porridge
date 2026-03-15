@@ -5,3 +5,12 @@ export type SessionMetadata = {
   updatedAt: string;
   createdAt: string;
 };
+
+export type SessionContent = {
+  type: "doc";
+  content: Record<string, unknown>[];
+};
+
+export type Session = SessionMetadata & {
+  content: SessionContent;
+};
