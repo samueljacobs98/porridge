@@ -1,38 +1,17 @@
 "use client";
 
-import { mergeAttributes, Node } from "@tiptap/core";
-import { TextSelection } from "@tiptap/pm/state";
-import type { EditorView } from "@tiptap/pm/view";
 import { EditorContent, useEditor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import { useSessionId } from "@/lib/state/providers/session-provider";
 import { Document } from "./lib/document";
+import { EmptySessionContentPlaceholder } from "./lib/extensions/empty-session-content-placeholder";
 import { ScopedSelectAll } from "./lib/extensions/scoped-select-all";
 import { CreatedAtDate } from "./lib/nodes/created-at-date";
+import { SessionParagraph } from "./lib/nodes/session-paragraph";
 import { SessionTitle } from "./lib/nodes/session-title";
 import { useSessionContent } from "./lib/state/hooks/use-session-content";
+import { moveSelectionToEnd } from "./lib/utils/move-selection-to-end";
 import { LoadingFallback } from "./loading-fallback";
-
-const SessionParagraph = Node.create({
-  name: "paragraph",
-  priority: 1_000,
-  group: "block",
-  content: "inline*",
-
-  parseHTML() {
-    return [{ tag: "p" }];
-  },
-
-  renderHTML({ HTMLAttributes }) {
-    return ["p", mergeAttributes(HTMLAttributes), 0];
-  },
-});
-
-function moveSelectionToEnd(view: EditorView) {
-  view.dispatch(
-    view.state.tr.setSelection(TextSelection.atEnd(view.state.doc))
-  );
-}
 
 export function SessionEditor() {
   const session = useSessionId();
@@ -49,6 +28,7 @@ export function SessionEditor() {
       SessionParagraph,
       SessionTitle,
       CreatedAtDate,
+      EmptySessionContentPlaceholder,
       ScopedSelectAll,
     ],
     content,
@@ -82,7 +62,7 @@ export function SessionEditor() {
   return (
     <EditorContent
       editor={editor}
-      className="[&_.tiptap]:outline-none [&_.tiptap_h1]:text-2xl [&_.tiptap_h1]:font-semibold"
+      className="[&_.tiptap]:outline-none [&_.tiptap_h1]:text-2xl [&_.tiptap_h1]:font-semibold [&_.tiptap_p.is-empty-session-content]:before:pointer-events-none [&_.tiptap_p.is-empty-session-content]:before:float-left [&_.tiptap_p.is-empty-session-content]:before:h-0 [&_.tiptap_p.is-empty-session-content]:before:text-muted-foreground [&_.tiptap_p.is-empty-session-content]:before:content-[attr(data-placeholder)]"
     />
   );
 }
