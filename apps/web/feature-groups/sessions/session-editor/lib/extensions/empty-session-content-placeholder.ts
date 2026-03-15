@@ -2,6 +2,7 @@ import { Extension } from "@tiptap/core";
 import { Plugin } from "@tiptap/pm/state";
 import { DecorationSet } from "@tiptap/pm/view";
 import { getEmptyContentPlaceholderDecoration } from "../utils/get-empty-content-placeholder-decoration";
+import { getEmptyTitlePlaceholderDecoration } from "../utils/get-empty-title-placeholder-decoration";
 
 export const EmptySessionContentPlaceholder = Extension.create({
   name: "emptySessionContentPlaceholder",
@@ -11,12 +12,13 @@ export const EmptySessionContentPlaceholder = Extension.create({
       new Plugin({
         props: {
           decorations(state) {
-            const placeholderDecoration = getEmptyContentPlaceholderDecoration(
-              state.doc
-            );
+            const placeholderDecorations = [
+              getEmptyTitlePlaceholderDecoration(state.doc),
+              getEmptyContentPlaceholderDecoration(state.doc),
+            ].filter((decoration) => decoration !== null);
 
-            return placeholderDecoration
-              ? DecorationSet.create(state.doc, [placeholderDecoration])
+            return placeholderDecorations.length > 0
+              ? DecorationSet.create(state.doc, placeholderDecorations)
               : null;
           },
         },
