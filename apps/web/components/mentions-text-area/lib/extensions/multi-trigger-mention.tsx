@@ -3,8 +3,7 @@ import { Popover, PopoverContent } from "@frontend/ui/components/popover";
 import { Extension } from "@tiptap/core";
 import { PluginKey } from "@tiptap/pm/state";
 import Suggestion, { exitSuggestion } from "@tiptap/suggestion";
-import type { Root } from "react-dom/client";
-import { createRoot } from "react-dom/client";
+import { createRoot, type Root } from "react-dom/client";
 import { MentionsSuggestionMenu } from "../../components/mentions-suggestion-menu";
 import type {
   MentionOption,
@@ -44,7 +43,7 @@ export const MultiTriggerMention = Extension.create<MultiTriggerMentionOptions>(
 
     addProseMirrorPlugins() {
       return Object.entries(this.options.mentions).map(([trigger, config]) => {
-        const controllerRef = this.options.controllerRef;
+        const { controllerRef } = this.options;
         const pluginKey = new PluginKey(`mentionsSuggestion-${trigger}`);
 
         return Suggestion({

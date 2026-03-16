@@ -1,5 +1,5 @@
 import { DateTime, parseDatetime } from "@repo/datetimes";
-import { SessionMetadata } from "@/lib/types";
+import type { SessionMetadata } from "@/lib/types";
 
 const DEFAULT_MAX_DAYS_IN_PAST = 10;
 

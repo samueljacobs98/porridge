@@ -1,6 +1,6 @@
 "use client";
 import { createContext, type ReactNode, use } from "react";
-import { Session } from "@/lib/types";
+import type { Session } from "@/lib/types";
 
 const SessionContext = createContext<Session | null>(null);
 
