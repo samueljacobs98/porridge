@@ -1,6 +1,6 @@
 "use server";
 
-import { ok, Result } from "@repo/result";
+import { ok, type Result } from "@repo/result";
 import type { Session } from "@/lib/types";
 import { action } from "@/lib/utils/action";
 import { getSessionSchema } from "../../schemas/get-session-schema";

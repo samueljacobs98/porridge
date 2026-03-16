@@ -1,5 +1,5 @@
 import { TextSelection } from "@tiptap/pm/state";
-import { EditorView } from "@tiptap/pm/view";
+import type { EditorView } from "@tiptap/pm/view";
 
 export function moveSelectionToEnd(view: EditorView) {
   view.dispatch(

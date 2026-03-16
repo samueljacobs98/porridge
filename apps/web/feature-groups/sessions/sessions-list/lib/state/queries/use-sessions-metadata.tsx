@@ -1,4 +1,4 @@
-import { SessionMetadata } from "@/lib/types";
+import type { SessionMetadata } from "@/lib/types";
 
 const sessions: SessionMetadata[] = [
   {
