@@ -1,13 +1,9 @@
 "use client";
 
-import { Button } from "@frontend/ui/components/button";
+import { useRef } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { EditorContent, useEditor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
-import {
-  editorContentSchema,
-  type SessionContent,
-} from "@/lib/schemas/editor-content-schema";
 import { useSessionId } from "@/lib/state/providers/session-provider";
 import { validateSubmittedContent } from "./lib/actions/validate-submitted-content";
 import { Document } from "./lib/document";
@@ -16,33 +12,26 @@ import { ScopedSelectAll } from "./lib/extensions/scoped-select-all";
 import { CreatedAtDate } from "./lib/nodes/created-at-date";
 import { SessionParagraph } from "./lib/nodes/session-paragraph";
 import { SessionTitle } from "./lib/nodes/session-title";
+import { useSessionAutosave } from "./lib/state/hooks/use-session-autosave";
 import { useSessionContent } from "./lib/state/hooks/use-session-content";
 import { moveSelectionToEnd } from "./lib/utils/move-selection-to-end";
 import { LoadingFallback } from "./loading-fallback";
 
-function buildSubmittedContent(rawContent: unknown): SessionContent {
-  const editorContent = editorContentSchema.parse(rawContent);
-  const [title, createdAtDate, ...body] = editorContent.content;
-
-  return {
-    type: "doc",
-    content: [
-      {
-        type: "heading",
-        attrs: { level: 1 },
-        content: title.content,
-      },
-      createdAtDate,
-      ...body,
-    ],
-  };
-}
-
 export function SessionEditor() {
   const session = useSessionId();
   const content = useSessionContent(session);
+  const latestRawContentRef = useRef<unknown>(content);
   const saveMutation = useMutation({
     mutationFn: validateSubmittedContent,
+  });
+  const autosave = useSessionAutosave({
+    sessionId: session.id,
+    getLatestRawContent: () => {
+      return latestRawContentRef.current ?? null;
+    },
+    remoteSave: async (nextContent) => {
+      await saveMutation.mutateAsync(nextContent);
+    },
   });
 
   const editor = useEditor({
@@ -60,6 +49,10 @@ export function SessionEditor() {
       ScopedSelectAll,
     ],
     content,
+    onUpdate: ({ editor: nextEditor }) => {
+      latestRawContentRef.current = nextEditor.getJSON();
+      autosave.onEdit();
+    },
     immediatelyRender: false,
     editorProps: {
       handleClick(view, _position, event) {
@@ -79,6 +72,10 @@ export function SessionEditor() {
 
           return false;
         },
+        blur() {
+          autosave.onBlur();
+          return false;
+        },
       },
     },
   });
@@ -93,20 +90,11 @@ export function SessionEditor() {
         editor={editor}
         className="[&_.tiptap]:outline-none [&_.tiptap_h1]:text-2xl [&_.tiptap_h1]:font-semibold [&_.tiptap_h1.is-empty-session-title]:before:pointer-events-none [&_.tiptap_h1.is-empty-session-title]:before:float-left [&_.tiptap_h1.is-empty-session-title]:before:h-0 [&_.tiptap_h1.is-empty-session-title]:before:text-muted-foreground [&_.tiptap_h1.is-empty-session-title]:before:content-[attr(data-placeholder)] [&_.tiptap_p.is-empty-session-content]:before:pointer-events-none [&_.tiptap_p.is-empty-session-content]:before:float-left [&_.tiptap_p.is-empty-session-content]:before:h-0 [&_.tiptap_p.is-empty-session-content]:before:text-muted-foreground [&_.tiptap_p.is-empty-session-content]:before:content-[attr(data-placeholder)]"
       />
-      <div className="flex items-center gap-2">
-        <Button
-          type="button"
-          onClick={async () => {
-            const submittedContent = buildSubmittedContent(editor.getJSON());
-            await saveMutation.mutateAsync(submittedContent);
-          }}
-          disabled={saveMutation.isPending}
-        >
-          {saveMutation.isPending ? "Saving..." : "Save"}
-        </Button>
-        {saveMutation.isError ? (
-          <span className="text-sm text-destructive">
-            Could not validate session content.
+      <div className="flex items-center gap-2 text-sm text-muted-foreground">
+        <span>{autosave.status}</span>
+        {autosave.lastError ? (
+          <span className="text-destructive">
+            Last save failed. Retrying automatically.
           </span>
         ) : null}
       </div>

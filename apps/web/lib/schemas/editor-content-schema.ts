@@ -85,20 +85,20 @@ export const sessionBodyNodeSchema = z.union([
 
 export const sessionContentSchema = z.object({
   type: z.literal("doc"),
-  content: z.tuple([
-    headingNodeSchema,
-    createdAtDateNodeSchema,
-    sessionBodyNodeSchema,
-  ]).rest(sessionBodyNodeSchema),
+  content: z
+    .tuple([headingNodeSchema, createdAtDateNodeSchema, sessionBodyNodeSchema])
+    .rest(sessionBodyNodeSchema),
 });
 
 export const editorContentSchema = z.object({
   type: z.literal("doc"),
-  content: z.tuple([
-    sessionTitleNodeSchema,
-    createdAtDateNodeSchema,
-    sessionBodyNodeSchema,
-  ]).rest(sessionBodyNodeSchema),
+  content: z
+    .tuple([
+      sessionTitleNodeSchema,
+      createdAtDateNodeSchema,
+      sessionBodyNodeSchema,
+    ])
+    .rest(sessionBodyNodeSchema),
 });
 
 export type SessionBodyNode = z.infer<typeof sessionBodyNodeSchema>;

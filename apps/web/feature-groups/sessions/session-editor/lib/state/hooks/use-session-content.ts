@@ -1,14 +1,18 @@
 import { useMemo } from "react";
+import {
+  type EditorContent,
+  editorContentSchema,
+} from "@/lib/schemas/editor-content-schema";
 import type { Session, SessionBlockNode } from "@/lib/types";
 
-export function useSessionContent(session: Session) {
+export function useSessionContent(session: Session): EditorContent {
   return useMemo(() => {
     const [titleNode, createdAtDateNode, ...blockNodes] =
       session.content.content;
     const normalizedBlockNodes: SessionBlockNode[] =
       blockNodes.length > 0 ? blockNodes : [{ type: "paragraph" }];
 
-    return {
+    return editorContentSchema.parse({
       type: "doc",
       content: [
         {
@@ -30,6 +34,6 @@ export function useSessionContent(session: Session) {
         },
         ...normalizedBlockNodes,
       ],
-    };
+    });
   }, [session.content, session.createdAt]);
 }
