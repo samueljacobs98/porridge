@@ -10,7 +10,7 @@ const optionalTextLeafSchema = z.object({
   text: z.string().optional(),
 });
 
-export const headingNodeSchema = z.object({
+const headingNodeSchema = z.object({
   type: z.literal("heading"),
   attrs: z.object({
     level: z.literal(1),
@@ -18,12 +18,12 @@ export const headingNodeSchema = z.object({
   content: z.array(textLeafSchema).min(1),
 });
 
-export const sessionTitleNodeSchema = z.object({
+const sessionTitleNodeSchema = z.object({
   type: z.literal("sessionTitle"),
   content: z.array(textLeafSchema).min(1),
 });
 
-export const createdAtDateNodeSchema = z.object({
+const createdAtDateNodeSchema = z.object({
   type: z.literal("createdAtDate"),
   attrs: z.object({
     date: z.string(),
@@ -47,7 +47,7 @@ const codeBlockNodeSchema = z.object({
 
 const listItemNodeSchema: z.ZodType<{
   type: "listItem";
-  content?: SessionBodyNode[];
+  content?: z.infer<typeof sessionBodyNodeSchema>[];
 }> = z.lazy(() =>
   z.object({
     type: z.literal("listItem"),
@@ -67,7 +67,7 @@ const orderedListNodeSchema = z.object({
 
 const blockquoteNodeSchema: z.ZodType<{
   type: "blockquote";
-  content?: SessionBodyNode[];
+  content?: z.infer<typeof sessionBodyNodeSchema>[];
 }> = z.lazy(() =>
   z.object({
     type: z.literal("blockquote"),
@@ -75,7 +75,7 @@ const blockquoteNodeSchema: z.ZodType<{
   })
 );
 
-export const sessionBodyNodeSchema = z.union([
+const sessionBodyNodeSchema = z.union([
   paragraphNodeSchema,
   bulletListNodeSchema,
   orderedListNodeSchema,
@@ -100,7 +100,3 @@ export const editorContentSchema = z.object({
     ])
     .rest(sessionBodyNodeSchema),
 });
-
-export type SessionBodyNode = z.infer<typeof sessionBodyNodeSchema>;
-export type SessionContent = z.infer<typeof sessionContentSchema>;
-export type EditorContent = z.infer<typeof editorContentSchema>;

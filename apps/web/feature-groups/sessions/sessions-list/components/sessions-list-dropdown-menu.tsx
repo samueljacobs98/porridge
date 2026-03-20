@@ -22,12 +22,12 @@ import { Flag } from "@frontend/ui/components/flag";
 import { useIsMounted } from "@frontend/ui/lib/state/hooks/use-is-mounted";
 import { IconDots } from "@tabler/icons-react";
 import { DatetimeFormat, formatDatetime } from "@repo/datetimes";
-import type { SessionMetadata } from "@/lib/types";
+import type { SessionMetadataDTO } from "@/lib/types";
 
 export function SessionsListDropdownMenu({
   sessionMetadata,
 }: {
-  sessionMetadata: SessionMetadata;
+  sessionMetadata: SessionMetadataDTO;
 }) {
   const mounted = useIsMounted();
 

@@ -4,7 +4,7 @@ import {
   formatDatetime,
   Settings,
 } from "@repo/datetimes";
-import { type SessionMetadata } from "@/lib/types";
+import { type SessionMetadataDTO } from "@/lib/types";
 import { useGroupedSessionsMetadata } from "./use-grouped-sessions-metadata";
 
 describe("useGroupedSessionsMetadata", () => {
@@ -19,7 +19,7 @@ describe("useGroupedSessionsMetadata", () => {
   });
 
   it("returns grouped sessions with DateTime dates", () => {
-    const sessions: SessionMetadata[] = [
+    const sessions: SessionMetadataDTO[] = [
       {
         id: "1",
         name: "Session A",
@@ -47,7 +47,7 @@ describe("useGroupedSessionsMetadata", () => {
   });
 
   it("groups sessions older than 10 days into an Earlier bucket by default", () => {
-    const sessions: SessionMetadata[] = [
+    const sessions: SessionMetadataDTO[] = [
       {
         id: "1",
         name: "Recent",
@@ -84,7 +84,7 @@ describe("useGroupedSessionsMetadata", () => {
   });
 
   it("supports a custom maxDaysInPast", () => {
-    const sessions: SessionMetadata[] = [
+    const sessions: SessionMetadataDTO[] = [
       {
         id: "1",
         name: "Recent",
@@ -122,7 +122,7 @@ describe("useGroupedSessionsMetadata", () => {
   });
 
   it("skips invalid datetimes", () => {
-    const sessions: SessionMetadata[] = [
+    const sessions: SessionMetadataDTO[] = [
       {
         id: "1",
         name: "Valid",

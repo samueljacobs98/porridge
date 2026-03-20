@@ -1,15 +1,12 @@
 import { useMemo } from "react";
-import {
-  type EditorContent,
-  editorContentSchema,
-} from "@/lib/schemas/editor-content-schema";
-import type { Session, SessionBlockNode } from "@/lib/types";
+import { editorContentSchema } from "@/lib/schemas/editor-content-schema";
+import type { BodyNode, EditorContent, SessionDTO } from "@/lib/types";
 
-export function useSessionContent(session: Session): EditorContent {
+export function useSessionContent(session: SessionDTO): EditorContent {
   return useMemo(() => {
     const [titleNode, createdAtDateNode, ...blockNodes] =
       session.content.content;
-    const normalizedBlockNodes: SessionBlockNode[] =
+    const normalizedBlockNodes: BodyNode[] =
       blockNodes.length > 0 ? blockNodes : [{ type: "paragraph" }];
 
     return editorContentSchema.parse({

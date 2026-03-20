@@ -1,10 +1,7 @@
-import type {
-  EditorContent,
-  SessionContent,
-} from "@/lib/schemas/editor-content-schema";
 import { editorContentSchema } from "@/lib/schemas/editor-content-schema";
+import type { EditorContent, SessionContentDTO } from "@/lib/types";
 
-export function buildSubmittedContent(rawContent: unknown): SessionContent {
+export function buildSubmittedContent(rawContent: unknown): SessionContentDTO {
   const editorContent = editorContentSchema.parse(rawContent);
   const [title, createdAtDate, ...body] = editorContent.content;
 
@@ -35,7 +32,7 @@ export function safeParseEditorContent(
 
 export function safeBuildSubmittedContent(
   rawContent: unknown
-): SessionContent | null {
+): SessionContentDTO | null {
   const editorContent = safeParseEditorContent(rawContent);
   if (!editorContent) return null;
 

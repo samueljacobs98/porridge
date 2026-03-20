@@ -236,7 +236,7 @@ export function MentionsTextArea({
         <EditorContent
           editor={editor}
           className={cn(
-            "bg-transparent text-sm transition-[color,box-shadow] outline-none aria-invalid:border-destructive aria-invalid:ring-3 aria-invalid:ring-destructive/20 dark:bg-input/30 dark:aria-invalid:border-destructive/50 dark:aria-invalid:ring-destructive/40 [&_.tiptap_p.is-empty-mentions-text-area]:before:pointer-events-none [&_.tiptap_p.is-empty-mentions-text-area]:before:float-left [&_.tiptap_p.is-empty-mentions-text-area]:before:h-0 [&_.tiptap_p.is-empty-mentions-text-area]:before:text-muted-foreground [&_.tiptap_p.is-empty-mentions-text-area]:before:content-[attr(data-placeholder)]",
+            "bg-background text-sm transition-[color,box-shadow] outline-none aria-invalid:border-destructive aria-invalid:ring-3 aria-invalid:ring-destructive/20 dark:aria-invalid:border-destructive/50 dark:aria-invalid:ring-destructive/40 [&_.tiptap_p.is-empty-mentions-text-area]:before:pointer-events-none [&_.tiptap_p.is-empty-mentions-text-area]:before:float-left [&_.tiptap_p.is-empty-mentions-text-area]:before:h-0 [&_.tiptap_p.is-empty-mentions-text-area]:before:text-muted-foreground [&_.tiptap_p.is-empty-mentions-text-area]:before:content-[attr(data-placeholder)]",
             disabled && "cursor-not-allowed opacity-50",
             readOnly && "bg-muted/40"
           )}

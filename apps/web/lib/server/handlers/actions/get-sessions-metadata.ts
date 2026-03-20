@@ -1,9 +1,9 @@
 import { ok, type Result } from "@repo/result";
-import type { SessionMetadata } from "@/lib/types";
+import type { SessionMetadataDTO } from "@/lib/types";
 import { action } from "@/lib/utils/action";
 
 export const getSessionsMetadata = action(
-  async (): Promise<Result<SessionMetadata[], void>> => {
+  async (): Promise<Result<SessionMetadataDTO[], void>> => {
     return ok([
       {
         id: "1",

@@ -1,4 +1,4 @@
-import type { EditorContent } from "@/lib/schemas/editor-content-schema";
+import type { EditorContent } from "@/lib/types";
 
 const DB_NAME = "porridge-session-editor";
 const DB_VERSION = 1;

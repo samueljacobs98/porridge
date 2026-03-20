@@ -1,29 +1,45 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import type { SessionContent } from "@/lib/schemas/editor-content-schema";
+import { useCallback, useEffect, useRef, useState } from "react";
+import type { SessionContentDTO } from "@/lib/types";
+import {
+  DEFAULT_BASE_RETRY_DELAY_MS,
+  DEFAULT_LOCAL_DEBOUNCE_MS,
+  DEFAULT_MAX_RETRY_DELAY_MS,
+  DEFAULT_MAX_UNSAVED_AGE_MS,
+  DEFAULT_REMOTE_THROTTLE_MS,
+  ScheduleRemoteSaveReasonEnum,
+} from "../../constants";
 import { saveDraftLocally } from "../../local-draft-storage";
 import {
   safeBuildSubmittedContent,
   safeParseEditorContent,
   type SaveResult,
 } from "../../save-pipeline";
+import type { ScheduleRemoteSaveReason } from "../../types";
 
-const LOCAL_DEBOUNCE_MS = 1500;
-const REMOTE_THROTTLE_MS = 8000;
-const MAX_UNSAVED_AGE_MS = 20000;
-const BASE_RETRY_DELAY_MS = 1000;
-const MAX_RETRY_DELAY_MS = 8000;
-
-type AutosaveOptions = {
+type AutosaveParams = {
   sessionId: string;
   getLatestRawContent: () => unknown | null;
-  remoteSave: (content: SessionContent) => Promise<void>;
+  remoteSave: (content: SessionContentDTO) => Promise<void>;
 };
 
-export function useSessionAutosave({
-  sessionId,
-  getLatestRawContent,
-  remoteSave,
-}: AutosaveOptions) {
+type AutosaveOptions = {
+  localDebounceMs: number;
+  remoteThrottleMs: number;
+  maxUnsavedAgeMs: number;
+  baseRetryDelayMs: number;
+  maxRetryDelayMs: number;
+};
+
+export function useSessionAutosave(
+  { sessionId, getLatestRawContent, remoteSave }: AutosaveParams,
+  {
+    localDebounceMs = DEFAULT_LOCAL_DEBOUNCE_MS,
+    remoteThrottleMs = DEFAULT_REMOTE_THROTTLE_MS,
+    maxUnsavedAgeMs = DEFAULT_MAX_UNSAVED_AGE_MS,
+    baseRetryDelayMs = DEFAULT_BASE_RETRY_DELAY_MS,
+    maxRetryDelayMs = DEFAULT_MAX_RETRY_DELAY_MS,
+  }: Partial<AutosaveOptions> = {}
+) {
   const [isDirty, setIsDirty] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [lastSavedAt, setLastSavedAt] = useState<number | null>(null);
@@ -119,8 +135,13 @@ export function useSessionAutosave({
   }, [getLatestRawContent, isDirty, remoteSave]);
 
   const scheduleRemoteSave = useCallback(
-    (reason: "change" | "blur" | "lifecycle" | "max-age" | "retry") => {
-      if (!isDirty && reason !== "lifecycle" && reason !== "blur") return;
+    (reason: ScheduleRemoteSaveReason) => {
+      if (
+        !isDirty &&
+        reason !== ScheduleRemoteSaveReasonEnum.LIFECYCLE &&
+        reason !== ScheduleRemoteSaveReasonEnum.BLUR
+      )
+        return;
       if (remoteTimerRef.current) {
         clearTimeout(remoteTimerRef.current);
       }
@@ -128,22 +149,23 @@ export function useSessionAutosave({
       const now = Date.now();
       const lastAttempt = lastRemoteAttemptAtRef.current ?? 0;
       const elapsedSinceAttempt = now - lastAttempt;
-      const throttleDelay = Math.max(
-        0,
-        REMOTE_THROTTLE_MS - elapsedSinceAttempt
-      );
+      const throttleDelay = Math.max(0, remoteThrottleMs - elapsedSinceAttempt);
       const dirtySince = dirtySinceRef.current ?? now;
       const unsavedAge = now - dirtySince;
-      const maxAgeDelay = Math.max(0, MAX_UNSAVED_AGE_MS - unsavedAge);
+      const maxAgeDelay = Math.max(0, maxUnsavedAgeMs - unsavedAge);
       const retryDelay = Math.min(
-        MAX_RETRY_DELAY_MS,
-        BASE_RETRY_DELAY_MS * 2 ** Math.max(0, retryCountRef.current - 1)
+        maxRetryDelayMs,
+        baseRetryDelayMs * 2 ** Math.max(0, retryCountRef.current - 1)
       );
 
       let delay = throttleDelay;
-      if (reason === "lifecycle" || reason === "blur" || reason === "max-age") {
+      if (
+        reason === ScheduleRemoteSaveReasonEnum.LIFECYCLE ||
+        reason === ScheduleRemoteSaveReasonEnum.BLUR ||
+        reason === ScheduleRemoteSaveReasonEnum.MAX_AGE
+      ) {
         delay = 0;
-      } else if (reason === "retry") {
+      } else if (reason === ScheduleRemoteSaveReasonEnum.RETRY) {
         delay = Math.min(throttleDelay, retryDelay);
       } else {
         delay = Math.min(throttleDelay, maxAgeDelay);
@@ -152,11 +174,18 @@ export function useSessionAutosave({
       remoteTimerRef.current = setTimeout(async () => {
         const result = await runRemoteSave();
         if (!result.didSave && isDirty) {
-          scheduleRemoteSave("retry");
+          scheduleRemoteSave(ScheduleRemoteSaveReasonEnum.RETRY);
         }
       }, delay);
     },
-    [isDirty, runRemoteSave]
+    [
+      isDirty,
+      runRemoteSave,
+      remoteThrottleMs,
+      maxUnsavedAgeMs,
+      baseRetryDelayMs,
+      maxRetryDelayMs,
+    ]
   );
 
   const onEdit = useCallback(() => {
@@ -170,21 +199,21 @@ export function useSessionAutosave({
     }
     localDebounceTimerRef.current = setTimeout(() => {
       void saveLocalNow();
-    }, LOCAL_DEBOUNCE_MS);
+    }, localDebounceMs);
 
-    scheduleRemoteSave("change");
-  }, [saveLocalNow, scheduleRemoteSave]);
+    scheduleRemoteSave(ScheduleRemoteSaveReasonEnum.CHANGE);
+  }, [saveLocalNow, scheduleRemoteSave, localDebounceMs]);
 
   const flushLifecycleSave = useCallback(() => {
     void saveLocalNow();
     if (isDirty) {
-      scheduleRemoteSave("lifecycle");
+      scheduleRemoteSave(ScheduleRemoteSaveReasonEnum.LIFECYCLE);
     }
   }, [isDirty, saveLocalNow, scheduleRemoteSave]);
 
   const onBlur = useCallback(() => {
     if (isDirty) {
-      scheduleRemoteSave("blur");
+      scheduleRemoteSave(ScheduleRemoteSaveReasonEnum.BLUR);
     }
   }, [isDirty, scheduleRemoteSave]);
 
@@ -218,19 +247,11 @@ export function useSessionAutosave({
     };
   }, []);
 
-  const status = useMemo(() => {
-    if (isSaving) return "Saving...";
-    if (isDirty && lastError) return "Retrying...";
-    if (lastSavedAt) return "Saved";
-    return "Idle";
-  }, [isDirty, isSaving, lastError, lastSavedAt]);
-
   return {
     isDirty,
     isSaving,
     lastSavedAt,
     lastError,
-    status,
     onEdit,
     onBlur,
     flushLifecycleSave,
