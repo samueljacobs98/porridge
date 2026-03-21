@@ -1,13 +1,23 @@
-export type HeadingNode = {
-  type: "heading";
-  attrs: { level: 1 };
-  content: Array<{ type: "text"; text: string }>;
-};
-
 export type CreatedAtDateNode = {
   type: "createdAtDate";
   attrs: { date: string };
 };
+
+/** TipTap text marks (bold, italic, link, …) stored on JSON text nodes. */
+export type TextMark = {
+  type: string;
+  attrs?: Record<string, unknown>;
+};
+
+export type InlineNode =
+  | {
+      type: "text";
+      text?: string;
+      marks?: TextMark[];
+    }
+  | {
+      type: "hardBreak";
+    };
 
 export type BodyNode =
   | {
@@ -16,12 +26,7 @@ export type BodyNode =
     }
   | {
       type: "paragraph";
-      content?:
-        | {
-            type: "text";
-            text?: string | undefined;
-          }[]
-        | undefined;
+      content?: InlineNode[] | undefined;
     }
   | {
       type: "bulletList";
@@ -52,6 +57,7 @@ export type BodyNode =
         | {
             type: "text";
             text?: string | undefined;
+            marks?: TextMark[];
           }[]
         | undefined;
     };

@@ -1,22 +1,29 @@
 import { z } from "zod";
 
-const textLeafSchema = z.object({
-  type: z.literal("text"),
-  text: z.string(),
+/** Preserves TipTap `marks` and other leaf fields (bold, italic, link attrs, …). */
+const textLeafSchema = z
+  .object({
+    type: z.literal("text"),
+    text: z.string(),
+  })
+  .passthrough();
+
+const optionalTextLeafSchema = z
+  .object({
+    type: z.literal("text"),
+    text: z.string().optional(),
+  })
+  .passthrough();
+
+const hardBreakNodeSchema = z.object({
+  type: z.literal("hardBreak"),
 });
 
-const optionalTextLeafSchema = z.object({
-  type: z.literal("text"),
-  text: z.string().optional(),
-});
-
-const headingNodeSchema = z.object({
-  type: z.literal("heading"),
-  attrs: z.object({
-    level: z.literal(1),
-  }),
-  content: z.array(textLeafSchema).min(1),
-});
+/** Paragraph inline: text (with optional marks) or line break (StarterKit). */
+const paragraphInlineSchema = z.union([
+  optionalTextLeafSchema,
+  hardBreakNodeSchema,
+]);
 
 const sessionTitleNodeSchema = z.object({
   type: z.literal("sessionTitle"),
@@ -32,7 +39,7 @@ const createdAtDateNodeSchema = z.object({
 
 const paragraphNodeSchema = z.object({
   type: z.literal("paragraph"),
-  content: z.array(optionalTextLeafSchema).optional(),
+  content: z.array(paragraphInlineSchema).optional(),
 });
 
 const codeBlockNodeSchema = z.object({
@@ -83,10 +90,10 @@ const sessionBodyNodeSchema = z.union([
   codeBlockNodeSchema,
 ]);
 
-export const sessionContentSchema = z.object({
+export const sessionBodyDocSchema = z.object({
   type: z.literal("doc"),
   content: z
-    .tuple([headingNodeSchema, createdAtDateNodeSchema, sessionBodyNodeSchema])
+    .tuple([sessionBodyNodeSchema])
     .rest(sessionBodyNodeSchema),
 });
 

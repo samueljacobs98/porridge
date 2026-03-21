@@ -1,9 +1,13 @@
 import { useRef } from "react";
-import Document from "@tiptap/extension-document";
 import { useEditor } from "@tiptap/react";
+import { Document } from "../../document";
 import StarterKit from "@tiptap/starter-kit";
-import type { SessionContentDTO, SessionDTO } from "@/lib/types";
+import type { SaveSessionBodyDTO, SessionDTO } from "@/lib/types";
 import { EmptySessionContentPlaceholder } from "../../extensions/empty-session-content-placeholder";
+import {
+  SessionBulletList,
+  SessionOrderedList,
+} from "../../extensions/session-list-input-rules";
 import { ScopedSelectAll } from "../../extensions/scoped-select-all";
 import { CreatedAtDate } from "../../nodes/created-at-date";
 import { SessionParagraph } from "../../nodes/session-paragraph";
@@ -17,7 +21,10 @@ export function useSessionEditor(
   {
     onSave,
   }: Partial<{
-    onSave: (sessionId: string, content: SessionContentDTO) => Promise<void>;
+    onSave: (
+      payload: SaveSessionBodyDTO,
+      previousSession: SessionDTO
+    ) => Promise<void>;
   }> = {}
 ) {
   const content = useSessionContent(session);
@@ -28,8 +35,8 @@ export function useSessionEditor(
     getLatestRawContent: () => {
       return latestRawContentRef.current ?? null;
     },
-    remoteSave: async (nextContent) => {
-      await onSave?.(session.id, nextContent);
+    remoteSave: async (payload) => {
+      await onSave?.(payload, session);
     },
   });
 
@@ -40,8 +47,12 @@ export function useSessionEditor(
         document: false,
         heading: false,
         paragraph: false,
+        bulletList: false,
+        orderedList: false,
       }),
       SessionParagraph,
+      SessionBulletList,
+      SessionOrderedList,
       SessionTitle,
       CreatedAtDate,
       EmptySessionContentPlaceholder,

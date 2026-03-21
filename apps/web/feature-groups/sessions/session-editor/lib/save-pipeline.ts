@@ -1,21 +1,37 @@
 import { editorContentSchema } from "@/lib/schemas/editor-content-schema";
-import type { EditorContent, SessionContentDTO } from "@/lib/types";
+import type {
+  BodyNode,
+  EditorContent,
+  SaveSessionBodyDTO,
+} from "@/lib/types";
 
-export function buildSubmittedContent(rawContent: unknown): SessionContentDTO {
+function sessionTitleToName(
+  title: EditorContent["content"][0]
+): string {
+  return title.content.map((n) => n.text).join("");
+}
+
+function normalizeBodyBlocks(nodes: BodyNode[]): [BodyNode, ...BodyNode[]] {
+  if (nodes.length > 0) {
+    return [nodes[0]!, ...nodes.slice(1)];
+  }
+  return [{ type: "paragraph" }];
+}
+
+export function buildSavePayloadFromEditor(
+  rawContent: unknown
+): SaveSessionBodyDTO {
   const editorContent = editorContentSchema.parse(rawContent);
-  const [title, createdAtDate, ...body] = editorContent.content;
+  const [title, , ...body] = editorContent.content;
+  const name = sessionTitleToName(title);
+  const bodyTuple = normalizeBodyBlocks(body);
 
   return {
-    type: "doc",
-    content: [
-      {
-        type: "heading",
-        attrs: { level: 1 },
-        content: title.content,
-      },
-      createdAtDate,
-      ...body,
-    ],
+    name,
+    content: {
+      type: "doc",
+      content: bodyTuple,
+    },
   };
 }
 
@@ -30,24 +46,22 @@ export function safeParseEditorContent(
   return parsed.success ? parsed.data : null;
 }
 
-export function safeBuildSubmittedContent(
+export function safeBuildSavePayloadFromEditor(
   rawContent: unknown
-): SessionContentDTO | null {
+): SaveSessionBodyDTO | null {
   const editorContent = safeParseEditorContent(rawContent);
   if (!editorContent) return null;
 
-  const [title, createdAtDate, ...body] = editorContent.content;
+  const [title, , ...body] = editorContent.content;
+  const name = sessionTitleToName(title);
+  const bodyTuple = normalizeBodyBlocks(body);
+
   return {
-    type: "doc",
-    content: [
-      {
-        type: "heading",
-        attrs: { level: 1 },
-        content: title.content,
-      },
-      createdAtDate,
-      ...body,
-    ],
+    name,
+    content: {
+      type: "doc",
+      content: bodyTuple,
+    },
   };
 }
 

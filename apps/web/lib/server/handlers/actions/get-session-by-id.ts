@@ -4,23 +4,23 @@ import { err, isErr, ok, type Result } from "@repo/result";
 import type { SessionDTO } from "@/lib/types";
 import { action } from "@/lib/utils/action";
 import { SessionsAdapter } from "../../adapters/sessions.adapter";
-import { SaveSessionApp } from "../../applications/save-session.app";
+import { GetSessionByIdApp } from "../../applications/get-session-by-id.app";
 import { SessionMapper } from "../../domain/mappers/session.mapper";
 import type { SessionError } from "../../ports/sessions.port";
-import { saveSessionSchema } from "../../schemas/save-session.schema";
+import { getSessionSchema } from "../../schemas/get-session.schema";
 
-export const saveSession = action(
-  saveSessionSchema,
+export const getSessionById = action(
+  getSessionSchema,
   async (
-    data
+    sessionId
   ): Promise<
     Result<
       SessionDTO,
       SessionError.SESSION_NOT_FOUND | SessionError.INTERNAL_SERVER_ERROR
     >
   > => {
-    const saveSessionApp = new SaveSessionApp(new SessionsAdapter());
-    const result = await saveSessionApp.execute(data);
+    const getSessionByIdApp = new GetSessionByIdApp(new SessionsAdapter());
+    const result = await getSessionByIdApp.execute(sessionId);
     if (isErr(result)) {
       return err(result.error);
     }

@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import type { SessionContentDTO } from "@/lib/types";
+import type { SaveSessionBodyDTO } from "@/lib/types";
 import {
   DEFAULT_BASE_RETRY_DELAY_MS,
   DEFAULT_LOCAL_DEBOUNCE_MS,
@@ -10,7 +10,7 @@ import {
 } from "../../constants";
 import { saveDraftLocally } from "../../local-draft-storage";
 import {
-  safeBuildSubmittedContent,
+  safeBuildSavePayloadFromEditor,
   safeParseEditorContent,
   type SaveResult,
 } from "../../save-pipeline";
@@ -19,7 +19,7 @@ import type { ScheduleRemoteSaveReason } from "../../types";
 type AutosaveParams = {
   sessionId: string;
   getLatestRawContent: () => unknown | null;
-  remoteSave: (content: SessionContentDTO) => Promise<void>;
+  remoteSave: (payload: SaveSessionBodyDTO) => Promise<void>;
 };
 
 type AutosaveOptions = {
@@ -96,8 +96,8 @@ export function useSessionAutosave(
     lastRemoteAttemptAtRef.current = Date.now();
 
     try {
-      const submittedContent = safeBuildSubmittedContent(rawContent);
-      if (!submittedContent) {
+      const submittedPayload = safeBuildSavePayloadFromEditor(rawContent);
+      if (!submittedPayload) {
         setIsDirty(true);
         const parseError = new Error(
           "Could not parse editor content for remote autosave."
@@ -108,7 +108,7 @@ export function useSessionAutosave(
       }
       lastGoodRawContentRef.current = rawContent;
 
-      await remoteSave(submittedContent);
+      await remoteSave(submittedPayload);
       const savedAt = Date.now();
       lastSuccessfulRemoteSaveAtRef.current = savedAt;
       setLastSavedAt(savedAt);
