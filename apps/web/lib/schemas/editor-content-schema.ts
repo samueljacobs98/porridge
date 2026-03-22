@@ -92,9 +92,7 @@ const sessionBodyNodeSchema = z.union([
 
 export const sessionBodyDocSchema = z.object({
   type: z.literal("doc"),
-  content: z
-    .tuple([sessionBodyNodeSchema])
-    .rest(sessionBodyNodeSchema),
+  content: z.tuple([sessionBodyNodeSchema]).rest(sessionBodyNodeSchema),
 });
 
 export const editorContentSchema = z.object({

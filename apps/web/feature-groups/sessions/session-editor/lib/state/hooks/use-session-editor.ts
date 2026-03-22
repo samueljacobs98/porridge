@@ -1,14 +1,14 @@
 import { useRef } from "react";
 import { useEditor } from "@tiptap/react";
-import { Document } from "../../document";
 import StarterKit from "@tiptap/starter-kit";
 import type { SaveSessionBodyDTO, SessionDTO } from "@/lib/types";
+import { Document } from "../../document";
 import { EmptySessionContentPlaceholder } from "../../extensions/empty-session-content-placeholder";
+import { ScopedSelectAll } from "../../extensions/scoped-select-all";
 import {
   SessionBulletList,
   SessionOrderedList,
 } from "../../extensions/session-list-input-rules";
-import { ScopedSelectAll } from "../../extensions/scoped-select-all";
 import { CreatedAtDate } from "../../nodes/created-at-date";
 import { SessionParagraph } from "../../nodes/session-paragraph";
 import { SessionTitle } from "../../nodes/session-title";

@@ -1,13 +1,7 @@
 import { editorContentSchema } from "@/lib/schemas/editor-content-schema";
-import type {
-  BodyNode,
-  EditorContent,
-  SaveSessionBodyDTO,
-} from "@/lib/types";
+import type { BodyNode, EditorContent, SaveSessionBodyDTO } from "@/lib/types";
 
-function sessionTitleToName(
-  title: EditorContent["content"][0]
-): string {
+function sessionTitleToName(title: EditorContent["content"][0]): string {
   return title.content.map((n) => n.text).join("");
 }
 
