@@ -1,3 +1,4 @@
+import type { ValidDateTime } from "@repo/datetimes";
 import type { BodyNode } from "@/lib/types";
 import { SessionMetadata } from "./session-metadata";
 
@@ -6,8 +7,8 @@ export class Session extends SessionMetadata {
     id: string,
     name: string,
     lecturer: string,
-    updatedAt: Date,
-    createdAt: Date,
+    updatedAt: ValidDateTime,
+    createdAt: ValidDateTime,
     readonly transcript: string,
     readonly body: [BodyNode, ...BodyNode[]]
   ) {

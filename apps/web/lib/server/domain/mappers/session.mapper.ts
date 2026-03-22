@@ -1,4 +1,5 @@
 import type { z, ZodError } from "zod";
+import { DateTime } from "@repo/datetimes";
 import { err, isErr, ok, type Result } from "@repo/result";
 import type { SessionDTO } from "@/lib/types";
 import { generateUuid } from "@/lib/utils/generate-uuid";
@@ -11,8 +12,8 @@ export class SessionMapper {
       id: session.id,
       name: session.name,
       lecturer: session.lecturer,
-      updatedAt: session.updatedAt.toISOString(),
-      createdAt: session.createdAt.toISOString(),
+      updatedAt: session.updatedAt.toISO(),
+      createdAt: session.createdAt.toISO(),
       transcript: session.transcript,
       content: {
         type: "doc",
@@ -68,8 +69,8 @@ export class SessionMapper {
       generateUuid(),
       dto.name,
       dto.lecturer,
-      new Date(),
-      new Date(),
+      DateTime.now(),
+      DateTime.now(),
       dto.transcript,
       dto.content.content
     );

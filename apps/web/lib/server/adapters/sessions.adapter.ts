@@ -2,6 +2,7 @@ import type { Low } from "lowdb";
 import { JSONFilePreset } from "lowdb/node";
 import path from "node:path";
 import type { ZodError } from "zod";
+import { DateTime } from "@repo/datetimes";
 import { err, isErr, isOk, ok, type Result } from "@repo/result";
 import type { BodyNode, SessionDTO } from "@/lib/types";
 import { SessionMetadataMapper } from "../domain/mappers/session-metadata.mapper";
@@ -184,14 +185,14 @@ export class SessionsAdapter implements SessionsPort {
       }
       const db = getDbResult.value;
 
-      const now = new Date();
+      const now = DateTime.now();
       const written: SessionDTO = {
         id: sessionId,
         name,
         lecturer: session.lecturer,
         transcript: session.transcript,
-        updatedAt: now.toISOString(),
-        createdAt: session.createdAt.toISOString(),
+        updatedAt: now.toISO(),
+        createdAt: session.createdAt.toISO(),
         content: {
           type: "doc",
           content: body,

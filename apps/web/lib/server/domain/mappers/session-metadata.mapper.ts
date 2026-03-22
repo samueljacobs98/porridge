@@ -10,8 +10,8 @@ export class SessionMetadataMapper {
       id: metadata.id,
       name: metadata.name,
       lecturer: metadata.lecturer,
-      updatedAt: metadata.updatedAt.toISOString(),
-      createdAt: metadata.createdAt.toISOString(),
+      updatedAt: metadata.updatedAt.toISO(),
+      createdAt: metadata.createdAt.toISO(),
     };
   }
 

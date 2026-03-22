@@ -1,11 +1,12 @@
 import z from "zod";
+import { datetimeSchema } from "@repo/datetimes";
 
 export class SessionMetadataSchema {
   static dtoSchema = z.object({
     id: z.string(),
     name: z.string(),
     lecturer: z.string(),
-    updatedAt: z.coerce.date(),
-    createdAt: z.coerce.date(),
+    updatedAt: datetimeSchema,
+    createdAt: datetimeSchema,
   });
 }

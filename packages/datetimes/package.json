@@ -2,7 +2,8 @@
   "name": "@repo/datetimes",
   "version": "0.0.0",
   "dependencies": {
-    "luxon": "^3.7.2"
+    "luxon": "^3.7.2",
+    "zod": "^4.3.6"
   },
   "devDependencies": {
     "@config/eslint": "workspace:*",
