@@ -18,6 +18,7 @@ import {
   FieldLabel,
 } from "@frontend/ui/components/field";
 import { Input } from "@frontend/ui/components/input";
+import { Textarea } from "@frontend/ui/components/textarea";
 import { IconPlus } from "@tabler/icons-react";
 import { useForm } from "@tanstack/react-form";
 import { toast } from "sonner";
@@ -133,14 +134,13 @@ export function SessionCreate() {
                 return (
                   <Field data-invalid={isInvalid}>
                     <FieldLabel htmlFor={field.name}>Transcript</FieldLabel>
-                    <textarea
+                    <Textarea
                       id={field.name}
                       name={field.name}
                       value={field.state.value}
                       onBlur={field.handleBlur}
                       onChange={(e) => field.handleChange(e.target.value)}
                       aria-invalid={isInvalid}
-                      className="min-h-30 w-full min-w-0 resize-y rounded-md border border-input bg-transparent px-2.5 py-2 text-base shadow-xs transition-[color,box-shadow] outline-none placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-3 aria-invalid:ring-destructive/20 md:text-sm dark:bg-input/30 dark:aria-invalid:border-destructive/50 dark:aria-invalid:ring-destructive/40"
                       placeholder="Paste or type the transcript"
                       rows={5}
                     />
