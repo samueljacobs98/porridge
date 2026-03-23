@@ -48,7 +48,7 @@ export function useGroupedSessionsMetadata(
 
   const byDate = sessions.reduce<Record<string, GroupedSession>>(
     (acc, session) => {
-      const dt = parseDatetime(session.createdAt)?.startOf("day");
+      const dt = parseDatetime(session.createdAt)?.toLocal().startOf("day");
       if (!dt) return acc;
 
       const isEarlier =

@@ -12,5 +12,5 @@ export const datetimeSchema = z.string().transform((value, ctx) => {
     return z.NEVER;
   }
 
-  return dt;
+  return dt.toUTC();
 });

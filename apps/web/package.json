@@ -52,7 +52,7 @@
     "lint": "eslint . --max-warnings 0",
     "lint:fix": "eslint . --fix",
     "start": "next start",
-    "test": "jest --detectOpenHandles",
+    "test": "TZ=UTC jest --detectOpenHandles",
     "typecheck": "tsc --noEmit"
   },
   "type": "module"

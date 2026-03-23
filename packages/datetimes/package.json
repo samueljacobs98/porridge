@@ -30,7 +30,7 @@
     "format": "prettier --write \"**/*.{ts,tsx,md}\" --ignore-path ../../.prettierignore",
     "format:check": "prettier --check \"**/*.{ts,tsx,md}\" --ignore-path ../../.prettierignore",
     "lint": "eslint .",
-    "test": "jest --detectOpenHandles",
+    "test": "TZ=UTC jest --detectOpenHandles",
     "typecheck": "tsc --noEmit"
   },
   "type": "module"

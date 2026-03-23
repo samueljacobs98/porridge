@@ -185,7 +185,7 @@ export class SessionsAdapter implements SessionsPort {
       }
       const db = getDbResult.value;
 
-      const now = DateTime.now();
+      const now = DateTime.utc();
       const written: SessionDTO = {
         id: sessionId,
         name,

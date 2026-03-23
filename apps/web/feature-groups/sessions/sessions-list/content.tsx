@@ -9,7 +9,8 @@ import {
   ListItemTitle,
 } from "@frontend/ui/components/list";
 import { useSuspenseQuery } from "@tanstack/react-query";
-import { DatetimeFormat, formatDatetime } from "@repo/datetimes";
+import { DatetimeFormat } from "@repo/datetimes";
+import { ClientLocalFormattedDatetime } from "@/components/client-local-formatted-datetime";
 import { sessionsQueries } from "@/lib/state/queries";
 import { getInitials } from "@/lib/utils/get-initials";
 import { SessionsListDropdownMenu } from "./components/sessions-list-dropdown-menu";
@@ -26,9 +27,15 @@ export function Content() {
         <div key={group.type === "earlier" ? "earlier" : group.date.toISO()}>
           <div className="p-2">
             <p className="text-xs font-medium text-muted-foreground">
-              {group.type === "earlier"
-                ? "Earlier"
-                : formatDatetime(group.date, DatetimeFormat.DateWeekday)}
+              {group.type === "earlier" ? (
+                "Earlier"
+              ) : (
+                <ClientLocalFormattedDatetime
+                  format={DatetimeFormat.DateWeekday}
+                >
+                  {group.date.toISO()!}
+                </ClientLocalFormattedDatetime>
+              )}
             </p>
           </div>
           <List>

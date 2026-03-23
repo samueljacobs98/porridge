@@ -69,8 +69,8 @@ export class SessionMapper {
       generateUuid(),
       dto.name,
       dto.lecturer,
-      DateTime.now(),
-      DateTime.now(),
+      DateTime.utc(),
+      DateTime.utc(),
       dto.transcript,
       dto.content.content
     );

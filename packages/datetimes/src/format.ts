@@ -48,22 +48,29 @@ export function formatDatetime(
   format: DatetimeFormat,
   options?: FormatDatetimeOptions
 ): string | null {
-  let dt = typeof datetime === "string" ? DateTime.fromISO(datetime) : datetime;
+  const dt =
+    typeof datetime === "string" ? DateTime.fromISO(datetime) : datetime;
 
   if (!dt.isValid) {
     return null;
   }
 
-  if (options?.locale) {
-    dt = dt.setLocale(options.locale);
-  }
-
   switch (format) {
     case DatetimeFormat.Iso:
-      return dt.toISO();
-    case DatetimeFormat.Relative:
-      return dt.toRelative();
-    default:
-      return dt.toFormat(FORMAT_TOKENS[format]);
+      return dt.toUTC().toISO();
+    case DatetimeFormat.Relative: {
+      let local = dt.toLocal();
+      if (options?.locale) {
+        local = local.setLocale(options.locale);
+      }
+      return local.toRelative();
+    }
+    default: {
+      let local = dt.toLocal();
+      if (options?.locale) {
+        local = local.setLocale(options.locale);
+      }
+      return local.toFormat(FORMAT_TOKENS[format]);
+    }
   }
 }

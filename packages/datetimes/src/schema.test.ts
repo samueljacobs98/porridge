@@ -9,6 +9,7 @@ describe("datetimeSchema", () => {
     if (result.success) {
       expect(result.data).toBeInstanceOf(DateTime);
       expect(result.data.isValid).toBe(true);
+      expect(result.data.zoneName).toBe("UTC");
       expect(result.data.year).toBe(2021);
       expect(result.data.month).toBe(1);
       expect(result.data.day).toBe(12);

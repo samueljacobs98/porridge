@@ -21,7 +21,8 @@ import {
 import { Flag } from "@frontend/ui/components/flag";
 import { useIsMounted } from "@frontend/ui/lib/state/hooks/use-is-mounted";
 import { IconDots } from "@tabler/icons-react";
-import { DatetimeFormat, formatDatetime } from "@repo/datetimes";
+import { DatetimeFormat } from "@repo/datetimes";
+import { ClientLocalFormattedDatetime } from "@/components/client-local-formatted-datetime";
 import type { SessionMetadataDTO } from "@/lib/types";
 
 export function SessionsListDropdownMenu({
@@ -34,7 +35,9 @@ export function SessionsListDropdownMenu({
   return (
     <>
       <p className="text-xs tabular-nums group-hover/list-item:hidden group-has-data-popup-open/list-item:hidden group-has-data-open/list-item:hidden">
-        {formatDatetime(sessionMetadata.createdAt, DatetimeFormat.Time24)}
+        <ClientLocalFormattedDatetime format={DatetimeFormat.Time24}>
+          {sessionMetadata.createdAt}
+        </ClientLocalFormattedDatetime>
       </p>
       <Flag show={mounted}>
         <AlertDialog>
