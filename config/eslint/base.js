@@ -20,7 +20,6 @@ export const config = [
       turbo: turboPlugin,
     },
     rules: {
-      "default-case": "warn",
       "default-param-last": "warn",
       "dot-notation": "warn",
       eqeqeq: "warn",

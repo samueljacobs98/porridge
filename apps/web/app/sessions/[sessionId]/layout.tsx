@@ -1,7 +1,9 @@
 import type { ReactNode } from "react";
 import { notFound } from "next/navigation";
-import { getSession } from "@/lib/server/handlers/actions/get-session";
-import { SessionProvider } from "@/lib/state/providers";
+import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
+import { SessionIdProvider } from "@/lib/state/providers";
+import { sessionsQueries } from "@/lib/state/queries";
+import { getQueryClient } from "@/lib/utils/get-query-client";
 
 export default async function Layout({
   params,
@@ -11,11 +13,18 @@ export default async function Layout({
   children: ReactNode;
 }) {
   const { sessionId } = await params;
-  const session = await getSession(sessionId);
+  const queryClient = getQueryClient();
+  const session = await queryClient.fetchQuery(
+    sessionsQueries.session(sessionId)
+  );
 
   if (!session) {
     notFound();
   }
 
-  return <SessionProvider session={session}>{children}</SessionProvider>;
+  return (
+    <HydrationBoundary state={dehydrate(queryClient)}>
+      <SessionIdProvider sessionId={sessionId}>{children}</SessionIdProvider>
+    </HydrationBoundary>
+  );
 }

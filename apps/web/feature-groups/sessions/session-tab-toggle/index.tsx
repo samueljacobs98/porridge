@@ -4,7 +4,7 @@ import {
   ToggleGroupItem,
 } from "@frontend/ui/components/toggle-group";
 import { IconAlignLeft, IconSparkles } from "@tabler/icons-react";
-import { useSessionTabParam } from "@/feature-groups/shared/lib/state/hooks/use-session-tab-param";
+import { useSessionTabParam } from "../shared/lib/state/hooks/use-session-tab-param";
 
 export function SessionTabToggle({ className }: { className?: string }) {
   const { tab, setTab } = useSessionTabParam();

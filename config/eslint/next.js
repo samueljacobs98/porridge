@@ -48,7 +48,7 @@ export const nextJsConfig = [
     },
   },
   {
-    files: ["**/page.tsx", "**/layout.tsx", "**/not-found.tsx"],
+    files: ["**/page.tsx", "**/layout.tsx", "**/not-found.tsx", "**/error.tsx"],
     rules: {
       "import/no-default-export": "off",
     },

@@ -1,22 +1,22 @@
 import { DateTime, parseDatetime } from "@repo/datetimes";
-import type { SessionMetadata } from "@/lib/types";
+import type { SessionMetadataDTO } from "@/lib/types";
 
 const DEFAULT_MAX_DAYS_IN_PAST = 10;
 
 type EarlierGroup = {
   type: "earlier";
-  sessions: SessionMetadata[];
+  sessions: SessionMetadataDTO[];
 };
 
 type InRangeGroup = {
   type: "in-range";
   date: DateTime;
-  sessions: SessionMetadata[];
+  sessions: SessionMetadataDTO[];
 };
 
 export type GroupedSession = EarlierGroup | InRangeGroup;
 
-function createEarlierGroup(sessions: SessionMetadata[]): EarlierGroup {
+function createEarlierGroup(sessions: SessionMetadataDTO[]): EarlierGroup {
   return {
     type: "earlier",
     sessions,
@@ -25,7 +25,7 @@ function createEarlierGroup(sessions: SessionMetadata[]): EarlierGroup {
 
 function createInRangeGroup(
   date: DateTime,
-  sessions: SessionMetadata[]
+  sessions: SessionMetadataDTO[]
 ): InRangeGroup {
   return {
     type: "in-range",
@@ -35,7 +35,7 @@ function createInRangeGroup(
 }
 
 export function useGroupedSessionsMetadata(
-  sessions: SessionMetadata[],
+  sessions: SessionMetadataDTO[],
   options: Partial<{
     maxDaysInPast: number;
   }> = {}
@@ -48,7 +48,7 @@ export function useGroupedSessionsMetadata(
 
   const byDate = sessions.reduce<Record<string, GroupedSession>>(
     (acc, session) => {
-      const dt = parseDatetime(session.createdAt)?.startOf("day");
+      const dt = parseDatetime(session.createdAt)?.toLocal().startOf("day");
       if (!dt) return acc;
 
       const isEarlier =

@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 import { Geist_Mono, Public_Sans } from "next/font/google";
+import { Toaster } from "@frontend/ui/components/sonner";
 import "@frontend/ui/globals.css";
 import { cn } from "@frontend/ui/lib/utils";
 import { AppSidebar } from "@/components/sidebar";
@@ -33,6 +34,7 @@ export default function RootLayout({
           <AppSidebar />
           {children}
         </AppProvider>
+        <Toaster />
       </body>
     </html>
   );

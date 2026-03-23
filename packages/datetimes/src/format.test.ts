@@ -1,4 +1,4 @@
-import { DateTime } from "luxon";
+import { DateTime, Settings } from "luxon";
 import { DatetimeFormat, formatDatetime } from "./format";
 
 describe("formatDatetime", () => {
@@ -81,5 +81,23 @@ describe("formatDatetime", () => {
       locale: "fr",
     });
     expect(result).toBe("12 janv. 2021");
+  });
+});
+
+describe("formatDatetime with America/Los_Angeles default zone", () => {
+  const previousDefaultZone = Settings.defaultZone;
+
+  beforeAll(() => {
+    Settings.defaultZone = "America/Los_Angeles";
+  });
+
+  afterAll(() => {
+    Settings.defaultZone = previousDefaultZone;
+  });
+
+  it("maps UTC midnight to the previous local calendar day for Date", () => {
+    expect(formatDatetime("2021-01-12T00:00:00Z", DatetimeFormat.Date)).toBe(
+      "11 Jan 2021"
+    );
   });
 });

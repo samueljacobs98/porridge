@@ -1,2 +1,2 @@
 export * from "./app-provider";
-export * from "./session-provider";
+export * from "./session-id-provider";
